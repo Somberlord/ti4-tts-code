@@ -58,6 +58,14 @@ local FACTION_SETS = {
     }
 }
 
+local STARTING_FACTION_POS = {
+    {col=0, row=1},
+    {col=1, row=0},
+    {col=4, row=0},
+    {col=1, row=4},
+    {col=4, row=4},
+}
+
 _config = {
     DEFAULT_SLICES = 7,
     DEFAULT_FACTIONS = 9,
@@ -267,18 +275,17 @@ function setupCoroutine()
     end
     order = assert(VolverMilty.permute(order))
 
-    -- Optionally override slices with manually-entered "slice string".
-    local factionNames = FactionTokens.randomFactionNames(1)
+    local factionNames = FactionTokens.randomFactionNames(#STARTING_FACTION_POS)
     local mapString = false
 
 
+    local positions = Position.startingFactionPositions()
     -- Add draft factions.
     for i, factionName in ipairs(factionNames) do
-        local position = Position.placeCommonFaction()
-        local token = FactionTokens.placeToken(factionName, position, self.getRotation())
-		FactionTokens.dealToAll(2)
+        FactionTokens.placeToken(factionName, positions[i], self.getRotation(), i==1)
         coroutine.yield(0)
     end
+    FactionTokens.dealToAll(2)
     coroutine.yield(0)
 
 
@@ -592,10 +599,12 @@ end
 
 --- Place common faction
 -- @return table : {xyz} position.
-function Position.placeCommonFaction()
-    local col = 0
-    local row = 1
-    return Position._pos(col, row, Slots.DRAFT_MAT)
+function Position.startingFactionPositions()
+    local positions = {}
+    for _,pos in ipairs(STARTING_FACTION_POS) do
+        positions[#positions+1] = Position._pos(pos.col, pos.row, Slots.DRAFT_MAT)
+    end
+    return positions
 end
 
 -------------------------------------------------------------------------------
@@ -676,12 +685,14 @@ function FactionTokens.dealToAll(numberToDeal)
 	end
 end
 
-function FactionTokens.placeToken(factionName, position, rotation)
+function FactionTokens.placeToken(factionName, position, rotation, hideFaction)
     assert(type(factionName) == 'string')
+    assert(type(hideFaction) == 'boolean')
     local faction = assert(_factionHelper.fromTokenName(factionName))
     local factionTokenName = faction.tokenName .. ' Faction Token'
 
-	local finalRotation = Vector(rotation.x, rotation.y, 180)
+    local finalRotation = rotation
+    if(hideFaction) then finalRotation = Vector(rotation.x, rotation.y, 180) end
 
     local bag = FactionTokens._getBag()
     for i, entry in ipairs(bag.getObjects()) do
