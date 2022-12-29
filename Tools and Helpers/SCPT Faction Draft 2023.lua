@@ -114,6 +114,14 @@ local BUTTONS = {
     }
 }
 
+local EXTRA_BUTTONS = {
+    {
+        id = 'drawFaction',
+        label = 'Draw Faction',
+        onClick = 'drawFaction',
+    }
+}
+
 local LABEL_COLORS = {
     Color.Red,
     Color.Green,
@@ -152,6 +160,33 @@ function onLoad(saveState)
             function_owner = self,
             label          = button.label,
             position       = Slots.getPosition(0, i - 1, Slots.DRAFT_MAT),
+            rotation       = { x = 0, y = 0, z = 0 },
+            scale          = { x = 1, y = 1, z = 1 },
+            width          = button.onClick and 1900 or 0,
+            height         = button.onClick and 1200 or 0,
+            font_size      = 240,
+            font_color     = button.onClick and 'Black' or 'White',
+            tooltip        = button.tooltip,
+        })
+        if button.confirm then
+            _buttonHelper.addConfirmStep({
+                guid = self.getGUID(),
+                buttonIndex = i - 1,
+                confirm = {
+                    label = 'CLICK AGAIN\nTO CONFIRM',
+                }
+            })
+        end
+    end
+
+    for i, button in ipairs(EXTRA_BUTTONS) do
+        local col_position = 1 + math.floor(i/2)
+        local row_position = 2 + ((i-1)%2)
+        self.createButton({
+            click_function = button.onClick or 'doNothing',
+            function_owner = self,
+            label          = button.label,
+            position       = Slots.getPosition(col_position, row_position, Slots.DRAFT_MAT),
             rotation       = { x = 0, y = 0, z = 0 },
             scale          = { x = 1, y = 1, z = 1 },
             width          = button.onClick and 1900 or 0,
@@ -250,6 +285,12 @@ end
 
 function doReset()
     startLuaCoroutine(self, 'resetCoroutine')
+end
+
+function drawFaction(obj, player_clicker_color)
+    local bag = FactionTokens._getBag()
+	bag.shuffle()
+    bag.deal(1, player_clicker_color)
 end
 
 -------------------------------------------------------------------------------
@@ -681,7 +722,7 @@ function FactionTokens.dealToAll(numberToDeal)
 	local bag = FactionTokens._getBag()
 	bag.shuffle()
 	for _, color in ipairs(_zoneHelper.zones()) do
-		bag.deal(2, color)
+		bag.deal(numberToDeal, color)
 	end
 end
 
