@@ -43,6 +43,7 @@ local _zoneHelper = getHelperClient('TI4_ZONE_HELPER')
 local PRESET_INPUTS = {
     ['SCPT 2021 Invitation'] = "slices=66,34,47,62,41|29,67,48,22,61|65,69,39,20,80|35,45,26,19,78|73,40,21,60,68|23,63,79,49,37|72,42,59,77,25|64,76,24,46,44&labels=Gravity's Hope's End|Feelin' Lucky Punk?|Intolerable Cruelty|Lump a Coal|Children at Play.|Highway to Meercatol|Gotcha Sumthin|Rigel Rocks",
 	['SCPT 2023 Qualifier'] = "slices=21,66,69,40,80|30,63,46,67,61|65,47,59,39,36|35,78,42,26,72|27,23,48,79,62|45,75,24,64,50|31,37,49,25,41&labels=No Country for Hope's End|Vorhallywood|More-d'Or|Lirta IV : The Voyage Home|Synecdoche, New Albion|Three Little Devils|Gravity's Blindside",
+	['SCPT 2023 Prelims'] = "slices=63,40,72,46,68|45,64,34,62,49|36,25,24,50,41|48,22,66,79,32|39,61,59,43,71|42,26,73,78,21|47,70,65,44,19&labels=Gone Girl|Big-Lore, Not Four|DOOT DOOT!|Ginger As She Goes|It's Finger...|It's Pronounced Kay All Dree|It's Pronounced Celery",
     --['SCPT 2022 Test'] = "clock=28800&slices=66,34,47,62,41|29,67,48,22,61|65,69,39,20,80|35,45,26,19,78|73,40,21,60,68|23,63,79,49,37|72,42,59,77,25|64,76,24,46,44&labels=Gravity's Hope's End|Feelin' Lucky Punk?|Intolerable Cruelty|Lump a Coal|Children at Play.|Highway to Meercatol|Gotcha Sumthin|Rigel Rocks&factions=sets:SCPT2022",
 }
 
@@ -100,6 +101,7 @@ local BUTTONS = {
     {
         id = 'setupPrelim2023',
         label = 'SCPT 2023\n Prelims',
+        onClick = 'setupPrelims2023',
     },
     {
         id = 'setupSemi2023',
@@ -268,6 +270,11 @@ end
 
 function setupQualifier2023()
 	CHOSEN_SLICES = PRESET_INPUTS['SCPT 2023 Qualifier']
+    doFinish()
+end
+
+function setupPrelims2023()
+	CHOSEN_SLICES = PRESET_INPUTS['SCPT 2023 Prelims']
     doFinish()
 end
 
